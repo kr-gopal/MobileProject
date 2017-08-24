@@ -24,15 +24,18 @@ public class MobileController {
         return new ResponseEntity<List<Mobile>>(mobileList,HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/findMobileByBrand", method = RequestMethod.GET)
-    public ResponseEntity<List<Mobile>> getAllMobilesByBrand(@RequestParam(value = "brand") String brand){
-        List<Mobile> mobileList=mobileService.getAllMobilesByBrand(brand);
+    @RequestMapping(value = "/findMobileByMultipleAttribute", method = RequestMethod.GET)
+    public ResponseEntity<List<Mobile>> getAllMobilesByMultipleAttribute(@RequestParam(value = "brands") String brands, 
+    		@RequestParam(value = "networkType")String networkType, @RequestParam(value = "mobileCore")Integer mobileCore, 
+    		@RequestParam(value = "ramSize")Integer ramSize, @RequestParam(value = "mobileOs")String mobileOs){
+        List<Mobile> mobileList=mobileService.getAllMobilesBymobileAttribute(brands,networkType,mobileCore,ramSize,mobileOs);
         return new ResponseEntity<List<Mobile>>(mobileList,HttpStatus.OK);
 
     }
-    @RequestMapping(value = "/findMobileByMultipleBrand", method = RequestMethod.GET)
-    public ResponseEntity<List<Mobile>> getAllMobilesByMultipleBrand(@RequestParam(value = "brand1") String brand1, @RequestParam(value="brand2")String brand2){
-        List<Mobile> mobileList=mobileService.getAllMobilesByMultipleBrand(brand1,brand2);
+    @RequestMapping(value = "/findMobileByMultipleBrands", method = RequestMethod.GET)
+    public ResponseEntity<List<Mobile>> getAllMobilesBymobileBrands(@RequestParam(value = "brands") String brands){
+    	        
+    	List<Mobile> mobileList=mobileService.getAllMobilesBymobileBrands(brands);
         return new ResponseEntity<List<Mobile>>(mobileList,HttpStatus.OK);
 
     }
@@ -50,17 +53,30 @@ public class MobileController {
         return new ResponseEntity<List<Mobile>>(mobileList,HttpStatus.OK);
 
     }
-    @RequestMapping(value="/searchMobile", method=RequestMethod.GET)
-    public ResponseEntity<List<Mobile>> searchMobile(@RequestParam(value="brand") String mobileBrand, @RequestParam(value="ramSize") Integer ramSize, @RequestParam(value="mobileOs") String MobileOs)
-    {
-    	List<Mobile> mobileList=mobileService.getMobileSearch(mobileBrand,ramSize,MobileOs);
-    	return new ResponseEntity<List<Mobile>>(mobileList,HttpStatus.OK);
+    
+    @RequestMapping(value = "/findMobileBymobileNetworkType", method = RequestMethod.GET)
+    public ResponseEntity<List<Mobile>> getAllMobilesByNetworkType(@RequestParam(value = "networkType") String NetworkType){
+        List<Mobile> mobileList=mobileService.getAllMobilesByMobileNetworkType(NetworkType);
+        return new ResponseEntity<List<Mobile>>(mobileList,HttpStatus.OK);
+
     }
+    
+    @RequestMapping(value = "/findMobileBymobileCore", method = RequestMethod.GET)
+    public ResponseEntity<List<Mobile>> getAllMobilesByNetworkType(@RequestParam(value = "mobileCore") Integer mobileCore){
+        List<Mobile> mobileList=mobileService.getAllMobilesByMobileCore(mobileCore);
+        return new ResponseEntity<List<Mobile>>(mobileList,HttpStatus.OK);
+
+    }
+    
     @RequestMapping(value="/postMobile", method=RequestMethod.POST)
-    public void storeMobile(@RequestParam(value="name")String Name, @RequestParam(value="brand") String Brand, @RequestParam(value="NetworkType") String NetworkType, @RequestParam(value="mobileOs") String MobileOs, @RequestParam(value="mobileCore") Integer mobileCore, @RequestParam(value="mobileRam") Integer mobileRam, @RequestParam(value="mobile_wifif") boolean mobile_wifif, @RequestParam(value="mobile_bluetooth") boolean mobile_bluetooth)
+    public Mobile storeMobile(@RequestParam(value="name")String Name, @RequestParam(value="brand") String Brand, 
+    		@RequestParam(value="NetworkType") String NetworkType, @RequestParam(value="mobileOs") String MobileOs, 
+    		@RequestParam(value="mobileCore") Integer mobileCore, @RequestParam(value="mobileRam") Integer mobileRam, 
+    		@RequestParam(value="mobile_wifif") boolean mobile_wifif, 
+    		@RequestParam(value="mobile_bluetooth") boolean mobile_bluetooth)
     {
 		Mobile M=new Mobile(Name, Brand, NetworkType,mobileCore,mobileRam,MobileOs,mobile_wifif, mobile_bluetooth);
-		mobileService.saveMobile(M);
+		return mobileService.saveMobile(M);
     }
     @RequestMapping(value = "/getAllMobileBrand", method = RequestMethod.GET)
     public ResponseEntity<List<String>> getAllMobileBrand(){
@@ -82,6 +98,7 @@ public class MobileController {
         return new ResponseEntity<List<Integer>>(mobileList,HttpStatus.OK);
 
     }
+    
     @RequestMapping(value="/merge", method=RequestMethod.GET)
     public Boolean merge(@RequestParam("mobile1") Integer mobile1_id ,@RequestParam("mobile2") Integer mobile2_id)
     {
@@ -94,8 +111,4 @@ public class MobileController {
     public String fallBack(){
         return "Fall Back";
     }
-
-
-
-
 }

@@ -1,16 +1,15 @@
 package com.mobile.service;
 
-import com.mobile.MobileApplication;
+
 import com.mobile.dao.MobileDao;
+import com.mobile.dao.MobileNativeQueryDao;
 import com.mobile.model.Mobile;
 import com.mobile.service.MobileService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 
 @Service
@@ -18,54 +17,78 @@ public class MobileServiceImplementation implements MobileService{
 
     @Autowired
     private MobileDao mobileDao;
+    @PersistenceContext
+    EntityManager em;
     
-    public List<Mobile> getAllMobilesByBrand(String mobileBrand){
-        return mobileDao.findByMobileBrand(mobileBrand);
-    }
-
-    /*public List<Mobile>getAllMobilesByMultipleBrand(String brand1, String brand2)
+    @Autowired
+    private MobileNativeQueryDao dao;
+    public List<Mobile> getAllMobilesBymobileAttribute(String brands, String networkType, Integer mobileCore, Integer ramSize, String mobileOs)
     {
-    	return mobileDao.findAll(where(getAllMobilesByBrand(brand1))
-    			.and(getAllMobilesByBrand(brand2)));
-    }*/
+    	if(brands==null && networkType==null && mobileCore==null && ramSize==null && mobileOs==null)
+    	{
+    		return (List<Mobile>) mobileDao.findAll();
+    	}
+    	else
+    	{
+    	return dao.getAllMobilesBymobileBrand(brands, networkType, mobileCore, ramSize, mobileOs);
+    	}
+    }
+    
+    // searching Mobile by multiple brands name only
+    public List<Mobile> getAllMobilesBymobileBrands(String brands)
+    {
+    	
+    	return dao.getAllMobilesBymobileBrands(brands);
+    }
+    
+    // searching Mobile by multiple ramSize only
+    public List<Mobile> getAllMobilesByRam(Integer mobileRam)
+    {
+    	return dao.getAllMobilesBymobileRamSize(mobileRam);
+    }
+    
+    // searching Mobile by multiple mobileOs only
     public List<Mobile> getAllMobilesByOS(String mobileOS){
-        return mobileDao.findByMobileOS(mobileOS);
+        return dao.getAllMobilesBymobileOs(mobileOS);
     }
 
-
-    public List<Mobile> getAllMobilesByRam(Integer mobileRam){
-        return mobileDao.findByMobileRAMSize(mobileRam);
+    // searching Mobile by multiple mobileCore only
+    public List<Mobile> getAllMobilesByMobileCore(Integer mobileCore){
+        return dao.getAllMobilesBymobileCore(mobileCore);
     }
-
+    
+    // searching Mobile by multiple networkType
+    public List<Mobile> getAllMobilesByMobileNetworkType(String networkType){
+        return dao.getAllMobilesBymobileNetworkType(networkType);
+    }
+    
+    //Get different all mobile Brands available in database
     public List<String> getAllMobileBrand(){
         return mobileDao.getAllDistinctBrand();
     }
 
+    //Get different all mobile Rams available in database
     public List<Integer> getAllMobileRam(){
         return mobileDao.getAllDistinctRam();
     }
 
+    //Get different all mobile Os available in database
     public List<String> getAllMobileOS(){
         return mobileDao.getAllDistinctMobileOS();
     }
-
-    //Query for multiple selection
-    @SuppressWarnings("unchecked")
-	public List<Mobile> getMobileSearch(String mobileBrand, Integer mobileRAMSize, String mobileOS){
-    	return mobileDao.findAll(Specifications.where((Specification<Mobile>) getAllMobilesByBrand(mobileBrand))
-    			.and((Specification<Mobile>) getAllMobilesByOS(mobileOS))
-    			.and((Specification<Mobile>) getAllMobilesByRam(mobileRAMSize)));
-    }
-    
+ 
+    //Save mobile in database
     public Mobile saveMobile(Mobile mobile){
         return mobileDao.save(mobile);
     }
 
+    //Get all mobiles
     public List<Mobile> getAllMobiles(){
         List<Mobile> mobileList= (List<Mobile>) mobileDao.findAll();
         return mobileList;
     }
 
+    // merge two mobiles
     public Boolean mergerTwoMobiles(Integer mobileId1, Integer mobileId2){
         Mobile mobile1=mobileDao.findMobileByMobileId(mobileId1);
         Mobile mobile2=mobileDao.findMobileByMobileId(mobileId2);
@@ -98,13 +121,4 @@ public class MobileServiceImplementation implements MobileService{
         return true;
 
     }
-
-	/*public List<Mobile> getMobileSearch(String mobileName, String mobileBrand,
-			String mobileNetworkType, Integer mobileAvailableCore,
-			Integer mobileRAMSize, String mobileOS,
-			Boolean mobileWifiAvailability, Boolean mobileBluethoothAvailablity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-*/
 }

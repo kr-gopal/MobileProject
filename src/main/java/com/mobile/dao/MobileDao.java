@@ -3,7 +3,6 @@ package com.mobile.dao;
 import com.mobile.model.Mobile;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -19,7 +18,7 @@ public interface MobileDao extends CrudRepository<Mobile, Integer>, JpaSpecifica
 
     @Query("select distinct m.mobileBrand from Mobile m")
     public List<String > getAllDistinctBrand();
-
+    
     public List<Mobile> findByMobileRAMSize(Integer mobileRAMSize);
 
     @Query("select distinct m.mobileRAMSize from Mobile m")
@@ -31,6 +30,6 @@ public interface MobileDao extends CrudRepository<Mobile, Integer>, JpaSpecifica
     @Query("select distinct m.mobileOS from Mobile m")
     public List<String > getAllDistinctMobileOS();
 
+    
     public Mobile findMobileByMobileId(Integer mobileId);
-    //public Mobile find
 }
